@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), unique=True)
     email = db.Column(db.String(50), unique=True)
-    ic = db.Column(db.String(12), db.ForeignKey('registered_unit.ic'))  # Corrected ForeignKey reference
+    ic = db.Column(db.String(12), db.ForeignKey('registered_unit.ic'))
     phone_num = db.Column(db.String(20))
     password = db.Column(db.String(80))
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
@@ -110,6 +110,13 @@ def initialize_admin_data():
             roles=[Role.query.filter_by(name='security').first()]
         )
         db.session.add(security)
+        db.session.commit()
+        
+    new_unit = Registered_Unit.query.filter_by(unit="A0101").first()
+    if not new_unit:
+        
+        new_unit = Registered_Unit(id = 5000, ic = "030226040249", unit = "A0101")
+        db.session.add(new_unit)
         db.session.commit()
     
 class IncidentReport(db.Model):
