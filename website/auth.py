@@ -61,8 +61,8 @@ def sign_up():
             flash('Email must be greater than 4 characters.', category='error')
         elif len(username) < 2:
             flash('Username must be greater than 2 characters.', category='error')
-        elif len(phone_num) < 10:
-            flash('Phone number must be greater than 10 characters. Example "01131366628', category='error')
+        elif len(phone_num) < 10 or len(phone_num) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
         elif password1 != password2:
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 7:
@@ -166,8 +166,8 @@ def tenant_signup():
             flash('Email must be greater than 4 characters.', category='error')
         elif len(username) < 2:
             flash('Username must be greater than 2 characters.', category='error')
-        elif len(phone_num) < 10:
-            flash('Phone number must be greater than 10 characters. Example "01131366628', category='error')
+        elif len(phone_num) < 10 or len(phone_num) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
         elif len(ic) != 12:
             flash('IC number must be 12 digits no \'-\' in between.', category='error')
         elif password1 != password2:
@@ -208,8 +208,8 @@ def security_signup():
             flash('Email must be greater than 4 characters.', category='error')
         elif len(username) < 2:
             flash('Username must be greater than 2 characters.', category='error')
-        elif len(phone_num) < 10:
-            flash('Phone number must be greater than 10 characters. Example "01131366628', category='error')
+        elif len(phone_num) < 10 or len(phone_num) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
         elif len(ic) != 12:
             flash('IC number must be 12 digits no \'-\' in between.', category='error')
         elif password1 != password2:

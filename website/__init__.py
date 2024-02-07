@@ -23,7 +23,7 @@ def create_app():
     db.init_app(app)
     babel.init_app(app)
     
-    from .models import MyAdminIndexView, User, Registered_Unit, UserModelView
+    from .models import MyAdminIndexView, User, Registered_Unit, UserModelView, RegisteredUnitModelView
     admin.init_app(app, index_view=MyAdminIndexView())
 
     from .views import views
@@ -35,7 +35,7 @@ def create_app():
     
     # Add your model views here
     admin.add_view(UserModelView(User, db.session))
-    admin.add_view(ModelView(Registered_Unit, db.session))
+    admin.add_view(RegisteredUnitModelView(Registered_Unit, db.session))
     admin.add_link(MenuLink(name='Logout', url='/logout'))
 
     with app.app_context():

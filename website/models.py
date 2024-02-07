@@ -11,6 +11,7 @@ from flask_admin import AdminIndexView
 from flask_login import current_user
 from flask import redirect, request, url_for, flash
 from datetime import datetime, timedelta
+from wtforms import ValidationError
 
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -44,6 +45,21 @@ class UserModelView(ModelView):
             'get_label': 'name',
             'allow_blank': False,
             'validators': [],}}
+    
+    def on_model_change(self, form, model, is_created):
+        # This method is called before a model is created or updated
+        if is_created and form.password.data:
+            # Hash the password using scrypt
+            hashed_password = generate_password_hash(form.password.data, method='scrypt')
+            # Update the model's password field with the hashed password
+            model.password = hashed_password
+        elif not is_created and form.password.data:
+            # Check if the password has been changed. If so, hash the new password.
+            original_password = User.query.get(model.id).password
+            if form.password.data != original_password:
+                hashed_password = generate_password_hash(form.password.data, method='scrypt')
+                model.password = hashed_password
+        super(UserModelView, self).on_model_change(form, model, is_created)
 
     def is_accessible(self):
         # Check if current user is authenticated and has the 'admin' role
@@ -58,7 +74,7 @@ class UserModelView(ModelView):
             # Display an error message and redirect to the home page
             # if the user is logged in but does not have admin rights
             flash('You do not have access to this page.', 'error')
-            return redirect(url_for('/')) 
+            return redirect(url_for('/home')) 
 
 class Registered_Unit(db.Model):
     __tablename__ = 'registered_unit'
@@ -66,7 +82,11 @@ class Registered_Unit(db.Model):
     ic = db.Column(db.String(12)) 
     unit = db.Column(db.String(5))
     available = db.Column(db.Boolean, default=True)
+    
+class RegisteredUnitModelView(ModelView):
+    column_list = ['ic', 'unit', 'available']
 
+        
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.has_role('admin')

@@ -51,6 +51,8 @@ def incident_report():
         if not report_date or not incident_type or not description:
             flash('Please fill out all required fields.', 'danger')
             return render_template("incident_report.html", user=current_user)
+        elif len(contact_number) < 10 or len(contact_number) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
 
         try:
             report_date = datetime.strptime(report_date, '%Y-%m-%dT%H:%M')
@@ -160,8 +162,8 @@ def visitor_registration():
             flash('Invalid date format for duration of stay.', 'error')
             return redirect(url_for('views.visitor_registration'))
 
-        if len(phone_number) < 10:
-            flash('Phone number must be at least 10 digits.', 'error')
+        if len(phone_number) < 10 or len(phone_number) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
             return redirect(url_for('views.visitor_registration'))
         
         if len(ic_number) < 12 or len(ic_number) > 12:
