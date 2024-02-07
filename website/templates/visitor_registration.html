@@ -3,14 +3,14 @@
 {% block content %}
 <style>
     .btn-light-grey {
-        background-color: #d3d3d3; /* Light grey color */
-        border-color: #d3d3d3; /* Light grey border */
-        color: black; /* Text color */
+        background-color: #d3d3d3;
+        border-color: #d3d3d3; 
+        color: black; 
     }
-    .btn-light-red {
-        background-color: #FF5733; /* Light red color */
-        border-color: #FF5733; /* Light red border */
-        color: white; /* Text color */
+    .btn-blue {
+        background-color: #007bff; 
+        border-color: #007bff; 
+        color: white; 
     }
 </style>
 <body>
@@ -29,7 +29,7 @@
             <input type="text" id="ic_number" name="ic_number" placeholder="Visitor's IC Number" class="form-control" required>
         </div>
         <div class="form-group">
-            <label for="duration_of_stay">Duration of stay:</label>
+            <label for="duration_of_stay">Duration of Stay:</label>
             <input type="datetime-local" id="duration_of_stay" name="duration_of_stay" placeholder="Duration of Stay" class="form-control" required>
         </div>
         <div class="form-group">    
@@ -38,10 +38,10 @@
         </div>
         <div class="row">
             <div class="col text-left">
-                <a href="{{ url_for('views.visitor') }}" class="btn btn-light-red">Back</a>
+                <a href="{{ url_for('views.visitor') }}" class="btn btn-secondary">Back</a>
             </div>
             <div class="col text-right">
-                <button type="submit" class="btn btn-light-grey">Register</button>
+                <button type="submit" class="btn btn-blue">Register</button>
             </div>
         </div>
     </form>

@@ -16,15 +16,10 @@
         border-color: #d3d3d3; 
         color: black; 
     }
-    .btn-red {
-        background-color: #ff5733;
-        border-color: #ff5733; 
-        color: white; 
-    }
     .back-button-container .btn-custom {
         width: 150px;
         height: 40px;
-        border-radius: 0; 
+        border-radius: 15px; 
     }
 </style>
 <div class="text-center header-container"> 
@@ -42,7 +37,7 @@
     </div>
     <div style="margin-bottom: 25px;"> 
         <div class="back-button-container">
-            <a href="{{ url_for('views.home') }}" class="btn btn-red btn-custom">Back</a>
+            <a href="{{ url_for('views.home') }}" class="btn btn-secondary btn-custom">Back</a>
         </div>
     </div>
 </div>

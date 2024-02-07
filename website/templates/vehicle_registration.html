@@ -2,14 +2,14 @@
 {% block title %}Registration{% endblock %}
 {% block content %}
 <style>
-    .btn-light-grey {
+    .btn-grey {
         background-color: #d3d3d3; 
         border-color: #d3d3d3; 
         color: black; 
     }
-    .btn-light-red {
-        background-color: #FF5733; 
-        border-color: #FF5733; 
+    .btn-blue {
+        background-color: #007bff; 
+        border-color: #007bff; 
         color: white; 
     }
 </style>
@@ -38,10 +38,10 @@
         </div>
         <div class="row">
             <div class="col text-left">
-                <a href="{{ url_for('views.visitor') }}" class="btn btn-light-red">Back</a> 
+                <a href="{{ url_for('views.visitor') }}" class="btn btn-secondary">Back</a> 
             </div>
             <div class="col text-right">
-                <button type="submit" class="btn btn-light-grey">Register</button> 
+                <button type="submit" class="btn btn-blue">Register</button> 
             </div>
         </div>
     </form>

@@ -2,20 +2,10 @@
 {% block title %}Incident Report{% endblock %}
 {% block content %}
 <style>
-    .btn-light-grey {
-        background-color: #d3d3d3;
-        border-color: #d3d3d3;
-        color: black; 
-    }
-    .btn-light-red {
-        background-color: #FF5733; 
-        border-color: #FF5733; 
-        color: white; 
-    }
 </style>
 <body>
     <form method="POST">
-        <h3 align="center" style="margin-top: 50px;">Incident Report</h3> 
+        <h3 align="center">Incident Report</h3>
         <div class="form-group">
             <label for="reportedBy">Reported By:</label>
             <input type="text" id="reportedBy" name="reportedBy" placeholder="Name" class="form-control" required>
@@ -44,36 +34,33 @@
             <label for="description">Description:</label>
             <textarea id="description" name="description" placeholder="Description" class="form-control" required></textarea>
         </div>
-        <br />
-        <div class="row">
-            <div class="col text-left">
-                <div class="btn btn-light-grey">
+        <div class="row" style="margin-top: 1rem;">
+            <div class="col-md-6 text-left">
                 {% if user.is_authenticated %}
-                {% if current_user.has_role('user') %}
-                <a href="{{ url_for('views.userpage') }}" >Back</a>
-                {% elif current_user.has_role('tenant') %}
-                <a href="{{ url_for('views.tenantpage') }}" >Back</a>
-                {% endif %} 
+                    {% if current_user.has_role('user') %}
+                        <a href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+                    {% elif current_user.has_role('tenant') %}
+                        <a href="{{ url_for('views.tenantpage') }}" class="btn btn-secondary">Back</a>
+                    {% endif %} 
                 {% else %}
-                <a href="{{ url_for('views.visitor') }}" >Back</a>
+                    <a href="{{ url_for('views.visitor') }}" class="btn btn-secondary">Back</a>
                 {% endif %}
             </div>
-        </div>
-        <br />
-        <div class="col text-right">
-        <button type="submit" class="btn btn-light-grey">Submit</button> 
-        </div>
+            <div class="col-md-6 text-right">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>    
     </form>
+    <script>
+        function toggleAnonymous() {
+            var checkBox = document.getElementById("anonymousCheck");
+            var reportedBy = document.getElementById("reportedBy");
+            var unitId = document.getElementById("unitId");
+            var contactNumber = document.getElementById("contactNumber");
+            reportedBy.disabled = checkBox.checked;
+            unitId.disabled = checkBox.checked;
+            contactNumber.disabled = checkBox.checked;
+        }
+    </script>
 </body>
-<script>
-    function toggleAnonymous() {
-        var checkBox = document.getElementById("anonymousCheck");
-        var reportedBy = document.getElementById("reportedBy");
-        var unitId = document.getElementById("unitId");
-        var contactNumber = document.getElementById("contactNumber");
-        reportedBy.disabled = checkBox.checked;
-        unitId.disabled = checkBox.checked;
-        contactNumber.disabled = checkBox.checked;
-    }
-</script>
 {% endblock %}
