@@ -7,6 +7,6 @@ Installation Steps
    https://github.com/BlaBla-03/Visitor-Management-System
 
 2. You will need to install the required extensions of the program.
-3. Make sure python is install and open up the terminal in Visual Studio Code and insert the command below.
+3. Make sure python is install and open up the terminal in Visual Studio Code and insert the command.
    "pip install -r requirements.txt"
 4. Lastly, run the main.py
