@@ -47,14 +47,10 @@ class UserModelView(ModelView):
             'validators': [],}}
     
     def on_model_change(self, form, model, is_created):
-        # This method is called before a model is created or updated
         if is_created and form.password.data:
-            # Hash the password using scrypt
             hashed_password = generate_password_hash(form.password.data, method='scrypt')
-            # Update the model's password field with the hashed password
             model.password = hashed_password
         elif not is_created and form.password.data:
-            # Check if the password has been changed. If so, hash the new password.
             original_password = User.query.get(model.id).password
             if form.password.data != original_password:
                 hashed_password = generate_password_hash(form.password.data, method='scrypt')
@@ -62,17 +58,12 @@ class UserModelView(ModelView):
         super(UserModelView, self).on_model_change(form, model, is_created)
 
     def is_accessible(self):
-        # Check if current user is authenticated and has the 'admin' role
         return current_user.is_authenticated and current_user.has_role('admin')
 
     def inaccessible_callback(self, name, **kwargs):
-        # Redirect unauthorized users
         if not current_user.is_authenticated:
-            # Redirect to login page if the user is not logged in
             return redirect(url_for('auth.admin_login', next=request.url))
         else:
-            # Display an error message and redirect to the home page
-            # if the user is logged in but does not have admin rights
             flash('You do not have access to this page.', 'error')
             return redirect(url_for('/home')) 
 
@@ -93,27 +84,21 @@ class MyAdminIndexView(AdminIndexView):
 
     def inaccessible_callback(self, name, **kwargs):
         if not current_user.is_authenticated:
-            # Redirect to login page if the user is not logged in
             return redirect(url_for('auth.admin_login', next=request.url))
         else:
-            # Display an error message and redirect to the home page
-            # if the user is logged in but does not have admin rights
             flash('You do not have access to this page.', 'error')
             return redirect(url_for('/'))
     
 def initialize_admin_data():
-    # Create roles if they don't exist
-    for role_name in ['user', 'admin', 'security', 'tenant']:  # Added 'tenant' to the list
+    for role_name in ['user', 'admin', 'security', 'tenant']: 
         if not Role.query.filter_by(name=role_name).first():
             role = Role(name=role_name)
             db.session.add(role)
     
     db.session.commit()
 
-    # Check if the admin user exists
     admin_user = User.query.filter_by(email="admin123@gmail.com").first()
     if not admin_user:
-        # Insert default admin data
         admin = User(id = 10000,
             username="admin123",
             email="admin123@gmail.com",
@@ -176,7 +161,6 @@ class OTP(db.Model):
     used = db.Column(db.Boolean, default=False)
 
     def is_valid(self):
-        # Check if OTP is still valid (not used and within 10 minutes)
         return not self.used and (datetime.utcnow() - self.created_at) < timedelta(minutes=10)
     
 class Notification(db.Model):
