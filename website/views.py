@@ -41,13 +41,11 @@ def incident_report():
         description = request.form.get('description')
         first_report = IncidentReport.query.filter_by(id=40000).first()
 
-        # Check if anonymous checkbox is checked
         anonymous = 'anonymousCheck' in request.form
         reported_by = None if anonymous else request.form.get('reportedBy')
         unit_id = None if anonymous else request.form.get('unitId')
         contact_number = None if anonymous else request.form.get('contactNumber')
 
-        # Validation for required fields
         if not report_date or not incident_type or not description:
             flash('Please fill out all required fields.', 'danger')
             return render_template("incident_report.html", user=current_user)
@@ -88,8 +86,7 @@ def incident_report():
             flash('Report added successfully!', 'success')
             return redirect(url_for('views.incident_report'))
 
-    # Determine the user's role and authentication status for conditional back button rendering
-    user_role = getattr(current_user, 'roles', 'visitor')  # Default to 'visitor' if not authenticated or no role
+    user_role = getattr(current_user, 'roles', 'visitor')
     user_authenticated = current_user.is_authenticated
 
     return render_template("incident_report.html", 
@@ -104,7 +101,6 @@ def security_edit_incident(report_id):
     report = IncidentReport.query.get_or_404(report_id)
     
     if request.method == 'POST':
-        # Here, you simply update the 'checked' status
         report.checked = True
         db.session.commit()
         flash('Incident report marked as checked.', 'success')
@@ -116,7 +112,6 @@ def security_edit_incident(report_id):
 @role_required('security')
 @login_required
 def security_incident():
-    # Fetching unchecked incident reports
     incident_reports = IncidentReport.query.filter_by(checked=False).all()
     return render_template("security_incident.html", incident_reports=incident_reports, current_user=current_user)
 
@@ -124,7 +119,6 @@ def security_incident():
 @role_required('security')
 @login_required
 def security_checked():
-    # Fetching checked incident reports
     incident_reports = IncidentReport.query.filter_by(checked=True).all()
     return render_template("security_checked.html", incident_reports=incident_reports, current_user=current_user)
 
@@ -132,10 +126,7 @@ def security_checked():
 @role_required('security')
 @login_required
 def security_vehicle():
-    # Get the current date and time
     current_time = datetime.utcnow()
-
-    # Query for vehicle registrations with a parking duration later than the current time
     vehicle_registrations = VehicleRegistration.query.filter(
         VehicleRegistration.duration_of_park > current_time
     ).all()
@@ -168,6 +159,11 @@ def visitor_registration():
         
         if len(ic_number) < 12 or len(ic_number) > 12:
             flash('IC number must be 12 digits no \'-\' in between.', 'error')
+            return redirect(url_for('views.visitor_registration'))
+        
+        black_listed = Blacklist.query.filter_by(ic=ic_number).first()
+        if black_listed is not None:  
+            flash('Visitor is blacklisted.', 'error')
             return redirect(url_for('views.visitor_registration'))
 
         unit_exists = Registered_Unit.query.filter_by(unit=visiting_unit_number).first()
@@ -205,7 +201,7 @@ def visitor_registration():
             )
 
             db.session.add(visitor)
-            db.session.flush()  # Flush to assign an ID to the visitor instance
+            db.session.flush()  
             db.session.commit()
 
             flash(f'Registration successful! Your registration ID is {visitor.id}.', 'success')
@@ -226,16 +222,35 @@ def preregister():
         try:
             duration_of_stay = datetime.strptime(duration_of_stay, '%Y-%m-%dT%H:%M')  
         except ValueError:
-            flash('Invalid date format for duration of stay.', 'error')
+            flash('Invalid date format for duration of stay. Choose data later than today.', 'error')
             return redirect(url_for('views.visitor_registration'))
 
-        if len(phone_number) < 10:
-            flash('Phone number must be at least 10 digits.', 'error')
+        user_is_tenant = any(role.name == 'tenant' for role in current_user.roles)
+        user_is_user = any(role.name == 'user' for role in current_user.roles)
+
+        if user_is_tenant:
+            if visiting_unit_number != current_user.tenant_unit:
+                flash('Unit number does not belong to the tenant.', 'error')
+                return redirect(url_for('views.preregister'))
+        elif user_is_user:
+            user_units = Registered_Unit.query.filter_by(ic=current_user.ic).all()
+            user_unit_numbers = [unit.unit for unit in user_units]
+            if visiting_unit_number not in user_unit_numbers:
+                flash('Unit number does not belong to the user.', 'error')
+                return redirect(url_for('views.preregister'))
+
+        if len(phone_number) < 10 or len(phone_number) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
             return redirect(url_for('views.preregister'))
         
-        if len(ic_number) < 12 or len(ic_number) > 12:
-            flash('IC number must be 12 digits no \'-\' in between.', 'error')
+        if len(ic_number) != 12:
+            flash('IC number must be 12 digits with no \'-\' in between.', 'error')
             return redirect(url_for('views.preregister'))
+        
+        black_listed = Blacklist.query.filter_by(ic=ic_number).first()
+        if black_listed is not None:  
+            flash('Visitor is blacklisted.', 'error')
+            return redirect(url_for('views.visitor_registration'))
 
         unit_exists = Registered_Unit.query.filter_by(unit=visiting_unit_number).first()
         if not unit_exists:
@@ -261,7 +276,10 @@ def preregister():
             db.session.add(visitor)
             db.session.commit()
             flash(f'Registration successful!', 'success')
-            return redirect(url_for('views.userpage'))
+            if user_is_tenant:
+                return redirect(url_for('views.tenantpage'))
+            else:
+                return redirect(url_for('views.userpage'))
         else:
             visitor = VisitorRegistration(
             name=name,
@@ -273,11 +291,14 @@ def preregister():
             )
 
             db.session.add(visitor)
-            db.session.flush()  # Flush to assign an ID to the visitor instance
+            db.session.flush()  
             db.session.commit()
 
             flash(f'Registration successful!', 'success')
-            return redirect(url_for('views.userpage'))
+            if user_is_tenant:
+                return redirect(url_for('views.tenantpage'))
+            else:
+                return redirect(url_for('views.userpage'))
     return render_template("preregister.html", user=current_user, role=current_user.roles)
 
 @views.route('/vehicle_registration', methods=['GET', 'POST'])
@@ -290,8 +311,8 @@ def vehicle_registration():
         visiting_unit_number = request.form.get('visiting_unit_number')
         first_vehicle = VehicleRegistration.query.filter_by(id=500000).first()
 
-        if len(phone_number) < 10:
-            flash('Phone number must be at least 10 digits.', 'error')
+        if len(phone_number) < 10 or len(phone_number) > 15:
+            flash('Phone number must be greater than 10 but less than 15 characters. Example "01131366628', category='error')
             return redirect(url_for('views.vehicle_registration'))
 
         unit_exists = Registered_Unit.query.filter_by(unit=visiting_unit_number).first()
@@ -328,7 +349,7 @@ def vehicle_registration():
             )
 
             db.session.add(visitor)
-            db.session.flush()  # Flush to assign an ID to the visitor instance
+            db.session.flush() 
             db.session.commit()
 
             flash(f'Registration successful!', 'success')
@@ -340,11 +361,11 @@ def vehicle_registration():
 def generate_otp():
     if request.method == 'POST':
         otp_number = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-        creation_time = datetime.utcnow()  # Use UTC time for consistency
-        new_otp = OTP(otp=otp_number, created_at=creation_time)  # Assuming OTP model has a created_at field
+        creation_time = datetime.utcnow() 
+        new_otp = OTP(otp=otp_number, created_at=creation_time) 
         db.session.add(new_otp)
         db.session.commit()
-        session['otp_id'] = new_otp.id  # Store OTP ID in session to retrieve later
+        session['otp_id'] = new_otp.id  
         flash(f'Your OTP is {otp_number}. It will expire in 10 minutes.', 'success')
         return redirect(url_for('views.generate_otp'))
     
@@ -353,10 +374,8 @@ def generate_otp():
         otp_record = OTP.query.get(session['otp_id'])
         if otp_record and otp_record.is_valid():
             otp = otp_record.otp
-            # Calculate expiration time based on the OTP creation time + 10 minutes
             expiration_time = otp_record.created_at + timedelta(minutes=10)
-            # Convert times to ISO format for JavaScript
-            current_time_iso = datetime.utcnow().isoformat() + 'Z'  # Append 'Z' to indicate UTC
+            current_time_iso = datetime.utcnow().isoformat() + 'Z'  
             expiration_time_iso = expiration_time.isoformat() + 'Z'
             otp_info = {
                 'otp': otp,
@@ -364,7 +383,7 @@ def generate_otp():
                 'expiration_time': expiration_time_iso
             }
         else:
-            session.pop('otp_id')  # Remove expired or used OTP from session
+            session.pop('otp_id')  
     
     return render_template('generate_otp.html', otp_info=otp_info, user=current_user)
 
@@ -390,10 +409,8 @@ def security_visitor():
     visitor = None
     if request.method == 'POST':
         ic_number = request.form.get('ic_number')
-        # Current date at 00:00:00 hours to exclude past times within today
         today_start = datetime.utcnow().date()
-
-        # Adjust the query to exclude registrations where duration_of_stay is before today
+        
         visitor = VisitorRegistration.query.filter(
             VisitorRegistration.ic_number == ic_number,
             VisitorRegistration.duration_of_stay >= today_start
@@ -409,7 +426,6 @@ def security_visitor():
 @role_required('user')
 @login_required
 def availability():
-    # Assuming the 'ic' in Registered_Unit links to the current user
     user_units = Registered_Unit.query.filter_by(ic=current_user.ic).all()
     return render_template('availability.html', units=user_units, user=current_user)
 
@@ -418,7 +434,6 @@ def availability():
 @login_required
 def update_availability(unit_id):
     unit = Registered_Unit.query.get_or_404(unit_id)
-    # Ensure the user is authorized to update this unit
     if unit.ic == current_user.ic:
         new_status = request.form.get('available') == 'true'
         unit.available = new_status
@@ -432,16 +447,13 @@ def update_availability(unit_id):
 @role_required('user', 'tenant')
 @login_required
 def manage_account():
-    # Pass 'role' as a string or list, depending on your implementation
     return render_template('manage_account.html', user=current_user, role=current_user.roles)
 
 @views.route('/edit_account', methods=['GET', 'POST'])
 @role_required('user', 'tenant')
 @login_required
 def edit_account():
-    # This route renders the form for editing user details and processes the form submissions
     if request.method == 'POST':
-        # Since this is handled by 'edit_user_details' and 'change_password', redirect accordingly
         return redirect(url_for('views.manage_account'))
     return render_template('edit_account.html', user=current_user, role=current_user.roles)
 
@@ -449,7 +461,6 @@ def edit_account():
 @role_required('user', 'tenant')
 @login_required
 def edit_user_details():
-    # Your existing logic for updating user details
     phone_num = request.form.get('phone_num')
     email = request.form.get('email')
     user = User.query.get(current_user.id)
@@ -466,7 +477,6 @@ def edit_user_details():
 @role_required('user', 'tenant')
 @login_required
 def change_password():
-    # Your existing logic for changing the password
     old_password = request.form.get('old_password')
     new_password = request.form.get('new_password')
     confirm_new_password = request.form.get('confirm_new_password')
@@ -486,7 +496,7 @@ def change_password():
 @views.route('/notify_owner', methods=['POST'])
 def notify_owner():
     data = request.json
-    duration_of_stay = datetime.strptime(data['duration_of_stay'], '%Y-%m-%d %H:%M:%S')  # Parse the date string
+    duration_of_stay = datetime.strptime(data['duration_of_stay'], '%Y-%m-%d %H:%M:%S') 
     first_noti = Notification.query.filter_by(id=1000000).first()
     
     if first_noti is None:
@@ -519,14 +529,11 @@ def notify_owner():
 def notifications():
     today = datetime.utcnow().date()
 
-    # Find the Registered_Unit(s) associated with the current user's IC
     user_ic = current_user.ic
     user_units = Registered_Unit.query.filter_by(ic=user_ic).all()
 
-    # Extract unit numbers from the user's units
     user_unit_numbers = [unit.unit for unit in user_units]
 
-    # Fetch notifications for the units associated with the current user
     notifications = Notification.query.filter(
         Notification.unit.in_(user_unit_numbers),
         Notification.checked == False,
@@ -544,12 +551,10 @@ def approve_visitor():
     visitor_ic = data.get('visitor_ic')
     unit = data.get('unit')
     
-    # Find the latest VisitorRegistration entry for the given IC and unit
     visitor_registration = VisitorRegistration.query.filter_by(ic_number=visitor_ic, unit=unit).order_by(VisitorRegistration.registration_date.desc()).first()
     
     if visitor_registration:
         visitor_registration.owner_approved = True
-        # Now find and update the corresponding notification(s)
         Notification.query.filter_by(visitor_ic=visitor_ic, unit=unit).update({'checked': True})
         db.session.commit()
         return jsonify({'message': 'Visitor approved successfully.'}), 200
@@ -560,19 +565,16 @@ def approve_visitor():
 @role_required('user')
 @login_required
 def manage_visitor():
-    # Fetch all units owned by the current user
     user_units = Registered_Unit.query.filter_by(ic=current_user.ic).all()
     if not user_units:
         return redirect(url_for('views.index'), message="No units found for the current user.")
 
-    # Extract unit numbers to a list for querying
     user_unit_numbers = [unit.unit for unit in user_units]
 
-    # Query for visitors where the unit is in the user's units, duration of stay is in the future, and owner_approved is True
     visitors = VisitorRegistration.query.filter(
         VisitorRegistration.unit.in_(user_unit_numbers),
         VisitorRegistration.duration_of_stay > datetime.now(),
-        VisitorRegistration.owner_approved == True  # Filter by owner_approved
+        VisitorRegistration.owner_approved == True 
     ).all()
 
     return render_template('manage_visitor.html', visitors=visitors, user=current_user)
@@ -581,14 +583,11 @@ def manage_visitor():
 @role_required('user')
 @login_required
 def unapprove_visitor(visitor_id):
-    # Assuming current_user.ic contains the IC number of the logged-in user
     user_ic = current_user.ic
 
-    # Fetch all units associated with the current user's IC number
     user_units = Registered_Unit.query.filter_by(ic=user_ic).all()
     user_unit_numbers = [unit.unit for unit in user_units]
 
-    # Then, find the visitor with the given ID and ensure it belongs to one of these units
     visitor = VisitorRegistration.query.filter(
         VisitorRegistration.id == visitor_id,
         VisitorRegistration.unit.in_(user_unit_numbers)
@@ -607,14 +606,11 @@ def unapprove_visitor(visitor_id):
 @role_required('user')
 @login_required
 def manage_tenant():
-    # Define user_ic from the current_user
     user_ic = current_user.ic
     
-    # Get all units associated with the current_user's IC
     user_units = Registered_Unit.query.filter_by(ic=user_ic).all()
     user_unit_numbers = [unit.unit for unit in user_units]
 
-    # Get tenants for all units owned by the current_user
     tenants = User.query.filter(User.tenant_unit.in_(user_unit_numbers), User.roles.any(name='tenant')).all()
 
     return render_template('manage_tenant.html', tenants=tenants, user=current_user)
@@ -625,7 +621,6 @@ def manage_tenant():
 def delete_tenant(tenant_id):
     tenant = User.query.filter_by(id=tenant_id).first()
     
-    # Ensure the tenant belongs to the same unit and the current user has permission to delete
     if tenant and tenant.tenant_unit == current_user.tenant_unit:
         db.session.delete(tenant)
         db.session.commit()
@@ -633,19 +628,17 @@ def delete_tenant(tenant_id):
     return jsonify({'error': 'Unauthorized or tenant not found'}), 403
 
 @views.route('/security_blacklist', methods=['GET', 'POST'])
-@role_required('security')  # Make sure only security personnel can access
+@role_required('security') 
 @login_required
 def security_blacklist():
     if request.method == 'POST':
-        # Extract form data
         name = request.form.get('name')
         ic = request.form.get('ic')
         gender = request.form.get('gender')
         reason = request.form.get('reason')
         first_blacklist = Blacklist.query.filter_by(id=100).first()
 
-        # Validate the inputs as needed and then create a new Blacklist entry
-        if name and ic and gender and reason:  # Simple validation check
+        if name and ic and gender and reason: 
             if first_blacklist is None:
                 new_entry = Blacklist(id = 100, name=name, ic=ic, gender=gender, reason=reason)
                 db.session.add(new_entry)
@@ -659,13 +652,11 @@ def security_blacklist():
         else:
             flash('All fields are required.', 'error')
 
-    # Always display the current blacklist
     blacklist_entries = Blacklist.query.all()
     return render_template('security_blacklist.html', blacklist_entries=blacklist_entries)
 
 @views.route('/contact')
 def contact():
-    # Assuming you have a way to retrieve these numbers, for simplicity, they are hardcoded here
     security_phone = "+60 0367-8900"
     management_phone = "+60 0367-8901"
     

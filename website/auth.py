@@ -19,7 +19,6 @@ def login():
             login_user(user, remember=True)
             flash('Logged in successfully!', category='success')
             
-            # Redirect user based on role
             if any(role.name == 'admin' for role in user.roles):
                 return redirect(url_for('views.admin.index'))
             elif any(role.name == 'security' for role in user.roles):
@@ -42,7 +41,6 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     if not session.get('validated'):
-        # Redirect to the validation page if the check fails
         return redirect(url_for('auth.validate_ic_unit'))
     
     if request.method == 'POST':
@@ -52,7 +50,7 @@ def sign_up():
         phone_num = request.form.get('phone_num')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-        ic = session.get('ic')  # Get the IC from the session
+        ic = session.get('ic')
         
         user = User.query.filter_by(email=email).first()
         if user:
@@ -68,10 +66,8 @@ def sign_up():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            # Fetch the user role
             user_role = Role.query.filter_by(name='user').first()
 
-            # Create a new user and assign the user role
             new_user = User(email=email, username=username, phone_num=phone_num, 
                             password=generate_password_hash(password1, method='scrypt'), 
                             ic=ic, roles=[user_role])
@@ -91,16 +87,13 @@ def validate_ic_unit():
         ic = request.form.get('ic')
         unit = request.form.get('unit')
         
-        # Query the database for a record matching the provided IC and unit
         registered_unit = Registered_Unit.query.filter_by(ic=ic, unit=unit).first()
         
-        # If a matching record is found, proceed with the validation
         if registered_unit:
             session['validated'] = True
-            session['ic'] = ic  # Optionally store the IC in the session if needed later
+            session['ic'] = ic  
             return redirect(url_for('auth.sign_up'))
         else:
-            # Check which part of the validation failed
             if Registered_Unit.query.filter_by(ic=ic).first():
                 flash('Unit Number doesn\'t match.', category='error')
             else:
@@ -116,10 +109,9 @@ def admin_login():
         
         admin = User.query.filter_by(username=username).first()
         if admin and check_password_hash(admin.password, password):
-            # Check if user has the 'admin' role
             if any(role.name == 'admin' for role in admin.roles):
                 flash('Logged in successfully!', category='success')
-                login_user(admin)  # Use login_user for admins too
+                login_user(admin) 
                 return redirect(url_for('admin.index'))
             else:
                 flash('Access denied: You must be an admin to log in here.', category='error')
@@ -132,14 +124,13 @@ def admin_login():
 @auth.route('/security', methods=['GET', 'POST'])
 def security():
     if request.method == 'POST':
-        # Get the data from the form
         username = request.form.get('username')
         password = request.form.get('password')
         
         security = User.query.filter_by(username=username).first()
-        if security and check_password_hash(security.password, password):  # Assuming the hashed password is stored in admin.password
+        if security and check_password_hash(security.password, password): 
             flash('Logged in successfully!', category='success')
-            login_user(security)  # Use login_user for admins too
+            login_user(security) 
             return redirect(url_for('views.security_page'))
         else:
             flash('Incorrect credentials, try again.', category='error')
@@ -150,14 +141,19 @@ def security():
 @role_required('user')
 def tenant_signup():
     if request.method == 'POST':
-        # Get the data from the form
         email = request.form.get('email')
         username = request.form.get('username')
         phone_num = request.form.get('phone_num')
         ic = request.form.get('ic_num')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-        tenant_unit = request.form.get('tenant_unit')  # Get the tenant unit from the form
+        tenant_unit = request.form.get('tenant_unit')
+        
+        user_units = Registered_Unit.query.filter_by(ic=current_user.ic).all()
+        user_unit_numbers = [unit.unit for unit in user_units]
+        if tenant_unit not in user_unit_numbers:
+            flash('Unit number does not belong to the user.', 'error')
+            return redirect(url_for('views.manage_tenant'))  
         
         user = User.query.filter_by(email=email).first()
         if user:
@@ -175,13 +171,11 @@ def tenant_signup():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            # Fetch the user role
             user_role = Role.query.filter_by(name='tenant').first()
 
-            # Create a new user and assign the user role and tenant unit
             new_user = User(email=email, username=username, phone_num=phone_num,
                             password=generate_password_hash(password1, method='scrypt'),
-                            ic=ic, roles=[user_role], tenant_unit=tenant_unit)  # Add tenant_unit here
+                            ic=ic, roles=[user_role], tenant_unit=tenant_unit)  
             db.session.add(new_user)
             db.session.commit()
             flash('Tenant\'s account created!', category='success')
@@ -193,7 +187,6 @@ def tenant_signup():
 @role_required('admin')
 def security_signup():
     if request.method == 'POST':
-        # Get the data from the form
         email = request.form.get('email')
         username = request.form.get('username')
         phone_num = request.form.get('phone_num')
@@ -217,7 +210,6 @@ def security_signup():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            # Fetch the user role
             user_role = Role.query.filter_by(name='security').first()
 
             new_user = User(email=email, username=username, phone_num=phone_num,
