@@ -1,0 +1,40 @@
+{% extends 'security_base.html' %}
+{% block title %}Checked Incident Reports{% endblock %}
+{% block body %}
+
+<div class="container mt-5">
+    <h2>Checked Incident Reports</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Report Date</th>
+                <th>Incident Type</th>
+                <th>Description</th>
+                <th>Reported By</th>
+                <th>Contact Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in incident_reports %}
+            <tr>
+                <td>{{ report.id }}</td>
+                <td>{{ report.reportDate.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ report.incidentType }}</td>
+                <td>{{ report.description }}</td>
+                <td>{{ report.reportedBy }}</td>
+                <td>{{ report.contactNumber }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No checked incident reports.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="back-button-container">
+        <a href="{{ url_for('views.security_visitor') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
+{% endblock %}

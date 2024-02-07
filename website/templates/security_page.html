@@ -1,0 +1,32 @@
+{% extends 'security_base.html' %}
+{% block title %}Security{% endblock %}
+{% block content %}
+{% block additional_styles %}
+
+<style>
+    .btn-custom-grey {
+        background-color: #d9d9d9; /* Bootstrap's grey */
+        color: #000000; /* white text */
+        border-color: #d9d9d9;
+    }
+    .btn-custom-grey:hover, .btn-custom-grey:focus {
+        background-color: #aeaeae; /* Slightly darker grey for hover/focus */
+        border-color: #d9d9d9; /* Slightly darker border for hover/focus */
+    }
+  </style>
+  {% endblock %}
+
+
+  <div class="text-center mt-3">
+    <h1>Security's Homepage</h1>
+</div>
+<div class="d-flex flex-column align-items-center my-5">
+    <div class="d-grid gap-2 col-6 mx-auto"></div>
+    <button type="button" class="btn btn-custom-grey mb-4" style="width: 200px;" onclick="window.location.href='/security_incident'">Incident Management</button>
+    <button type="button" class="btn btn-custom-grey mb-4"style="width: 200px;" onclick="window.location.href='/verify_otp'">Verify OTP</button>
+    <button type="button" class="btn btn-custom-grey mb-4" style="width: 200px;"onclick="window.location.href='/security_visitor'">Visitor Verification</button>
+    <button type="button" class="btn btn-custom-grey mb-4" style="width: 200px;"onclick="window.location.href='/security_vehicle'">Registered Vehicle List</button>
+    <button type="button" class="btn btn-custom-grey mb-4"style="width: 200px;" onclick="window.location.href='/security_blacklist'">Blacklisted Visitor</button>
+</div>
+{% endblock %}
+```

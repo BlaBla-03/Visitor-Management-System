@@ -1,0 +1,80 @@
+{% extends "security_base.html" %}
+
+{% block title %}Security Blacklist{% endblock %}
+
+{% block content %}
+{% block additional_styles %}
+<style>
+    .btn-custom-grey {
+        background-color: #d9d9d9; /* Bootstrap's grey */
+        color: #000000; /* white text */
+        border-color: #d9d9d9;
+    }
+    .btn-custom-grey:hover, .btn-custom-grey:focus {
+        background-color: #aeaeae; /* Slightly darker grey for hover/focus */
+        border-color: #d9d9d9; /* Slightly darker border for hover/focus */
+    }
+  </style>
+  {% endblock %}
+
+<div class="container mt-5">
+    <h2>Blacklist</h2>
+    
+    <!-- Blacklist Form -->
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="ic" class="form-label">IC Number:</label>
+            <input type="text" class="form-control" id="ic" name="ic" required>
+        </div>
+        <div class="mb-3">
+            <label for="gender" class="form-label">Gender:</label>
+            <select class="form-select" id="gender" name="gender" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="reason" class="form-label">Reason for Blacklist:</label>
+            <textarea class="form-control" id="reason" name="reason" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add to Blacklist</button>
+    </form>
+
+    <!-- Blacklist Display -->
+    <div class="mt-4">
+        <h3>Blacklisted Individuals</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>IC Number</th>
+                    <th>Gender</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in blacklist_entries %}
+                <tr>
+                    <td>{{ entry.name }}</td>
+                    <td>{{ entry.ic }}</td>
+                    <td>{{ entry.gender }}</td>
+                    <td>{{ entry.reason }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No blacklisted individuals.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="back-button-container">
+        <a href="{{ url_for('views.security_page') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}

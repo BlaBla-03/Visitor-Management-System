@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Incident Report{% endblock %}
+{% block content %}
+<style>
+    .btn-light-grey {
+        background-color: #d3d3d3;
+        border-color: #d3d3d3;
+        color: black; 
+    }
+    .btn-light-red {
+        background-color: #FF5733; 
+        border-color: #FF5733; 
+        color: white; 
+    }
+</style>
+<body>
+    <form method="POST">
+        <h3 align="center" style="margin-top: 50px;">Incident Report</h3> 
+        <div class="form-group">
+            <label for="reportedBy">Reported By:</label>
+            <input type="text" id="reportedBy" name="reportedBy" placeholder="Name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="contactNumber">Contact Number:</label>
+            <input type="text" id="contactNumber" name="contactNumber" placeholder="Contact Number" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="unitId">Unit ID:</label>
+            <input type="text" id="unitId" name="unitId" placeholder="Unit ID" class="form-control" required>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="anonymousCheck" onclick="toggleAnonymous()">
+            <label class="form-check-label" for="anonymousCheck">Report Anonymously</label>
+        </div>
+        <div class="form-group">
+            <label for="reportDate">Report Date:</label>
+            <input type="datetime-local" id="reportDate" name="reportDate" placeholder="Date" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="incidentType">Incident Type:</label>
+            <input type="text" id="incidentType" name="incidentType" placeholder="Incident Type" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="Description" class="form-control" required></textarea>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col text-left">
+                <div class="btn btn-light-grey">
+                {% if user.is_authenticated %}
+                {% if current_user.has_role('user') %}
+                <a href="{{ url_for('views.userpage') }}" >Back</a>
+                {% elif current_user.has_role('tenant') %}
+                <a href="{{ url_for('views.tenantpage') }}" >Back</a>
+                {% endif %} 
+                {% else %}
+                <a href="{{ url_for('views.visitor') }}" >Back</a>
+                {% endif %}
+            </div>
+        </div>
+        <br />
+        <div class="col text-right">
+        <button type="submit" class="btn btn-light-grey">Submit</button> 
+        </div>
+    </form>
+</body>
+<script>
+    function toggleAnonymous() {
+        var checkBox = document.getElementById("anonymousCheck");
+        var reportedBy = document.getElementById("reportedBy");
+        var unitId = document.getElementById("unitId");
+        var contactNumber = document.getElementById("contactNumber");
+        reportedBy.disabled = checkBox.checked;
+        unitId.disabled = checkBox.checked;
+        contactNumber.disabled = checkBox.checked;
+    }
+</script>
+{% endblock %}

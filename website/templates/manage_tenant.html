@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Tenants{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div style="display: flex;">
+        <h2 style=" margin: 0;">Manage Tenants</h2>
+        <a style="margin-left: auto; border-radius: 20px;" href="{{ url_for('auth.tenant_signup') }}" class="btn btn-primary0">Register Tenant</a>
+        </div><br>
+    <div class="list-group">
+        {% for tenant in tenants %}
+        <div style="background-color: rgb(173, 170, 170) ; border-radius: 5px; border-width: 2px; margin-bottom: 5px; ;" class="list-group-item d-flex justify-content-between align-items-center">
+            <p style="margin: 0; font-weight: bold;">Tenant Name:<span style="font-weight: normal;"> {{ tenant.username }}</span> - Unit: <span style="font-weight: normal;">{{ tenant.tenant_unit }}</span></p>
+            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ tenant.id }}')">Delete</button>
+        </div>
+        {% else %}
+            <p style="font-weight: bold;">No tenants found for your unit.</p>
+        {% endfor %}
+    </div><br>
+    <div class="back-button-container">
+        <a style="border-radius: 20px;" href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
+<script>
+function confirmDelete(tenantId) {
+    const confirmation = confirm("Are you sure you want to delete this tenant?");
+    if (confirmation) {
+        fetch(`/delete_tenant/${tenantId}`, { method: 'POST' })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to delete tenant.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Generate OTP{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center"><br>
+            <h3>Generate OTP</h3>
+            <form action="{{ url_for('views.generate_otp') }}" method="post">
+                <button style="margin-top: 15px; margin-bottom: 15px; border-radius: 20px;" type="submit" class="btn btn-primary">Generate OTP</button>
+            </form>
+            {% if otp_info %}
+                <div style="border-radius: 20px;" class="alert alert-info" role="alert">
+                    Your OTP: <strong>{{ otp_info.otp }}</strong>
+                </div>
+                <!-- Hidden element for time data -->
+                <div id="otpTimer" data-current-time="{{ otp_info.current_time }}" data-expiration-time="{{ otp_info.expiration_time }}" style="display: none;"></div>
+                <div style="border-radius: 20px;" id="countdown" class="alert alert-warning" role="alert">
+                    Expires in <strong>10:00</strong> minutes
+                </div>
+            {% endif %}
+            {% if current_user.has_role('user') %}
+            <a style="border-radius: 20px;" href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+            {% elif current_user.has_role('tenant') %}
+            <a style="border-radius: 20px;" href="{{ url_for('views.tenantpage') }}" class="btn btn-secondary">Back</a>
+            {% endif %} 
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var otpTimerElement = document.getElementById('otpTimer');
+        var currentTime = new Date(otpTimerElement.getAttribute('data-current-time'));
+        var expirationTime = new Date(otpTimerElement.getAttribute('data-expiration-time'));
+
+        // Calculate remaining time in seconds
+        var remainingTime = Math.floor((expirationTime - currentTime) / 1000);
+        
+        var countdownElement = document.getElementById('countdown');
+
+        function updateCountdownDisplay() {
+            var minutes = parseInt(remainingTime / 60, 10);
+            var seconds = parseInt(remainingTime % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            if (countdownElement) {
+                countdownElement.querySelector('strong').textContent = minutes + ":" + seconds;
+            }
+        }
+
+        if (remainingTime > 0) {
+            updateCountdownDisplay();
+            var timer = setInterval(function() {
+                remainingTime -= 1;
+                updateCountdownDisplay();
+
+                if (remainingTime < 0) {
+                    clearInterval(timer);
+                    if (countdownElement) {
+                        countdownElement.textContent = "OTP has expired";
+                    }
+                }
+            }, 1000);
+        } else {
+            if (countdownElement) {
+                countdownElement.textContent = "OTP has expired";
+            }
+        }
+    });
+</script>
+{% endblock %}

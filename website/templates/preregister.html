@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Pre-Register Visitor{% endblock %}
+{% block content %}
+<body>
+    <form method="POST">
+        <br>
+        <h3 style="margin-bottom: 15px;" align="center">Pre-Register Visitor</h3>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Visitor's Name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Visitor's Phone Number" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="ic_number">IC Number:</label>
+            <input type="text" id="ic_number" name="ic_number" placeholder="Visitor's IC Number" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="duration_of_stay">Duration of stay:</label>
+            <input type="datetime-local" id="duration_of_stay" name="duration_of_stay" placeholder="Duration of Stay" class="form-control" required>
+        </div>
+        <div class="form-group">    
+            <label for="visiting_unit_number">Visiting Unit Number:</label>
+            <input type="text" id="visiting_unit_number" name="visiting_unit_number" placeholder="Visiting Unit Number" class="form-control" required>
+        </div>
+        <div style="display: flex;">
+            {% if current_user.has_role('user') %}
+            <a style="border-radius: 20px;" href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+            {% elif current_user.has_role('tenant') %}
+            <a style="border-radius: 20px;" href="{{ url_for('views.tenantpage') }}" class="btn btn-secondary">Back</a>
+            {% endif %}
+            <button style="margin-left: auto; border-radius: 20px;" type="submit" class="btn btn-primary">Register</button>
+        </div>
+        
+        </form>
+    </body>
+ 
+
+{% endblock %}

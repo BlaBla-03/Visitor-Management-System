@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="text-center">
+<br>    <h1>Tenant's Homepage</h1>
+</div>
+<div class="text-center">
+    <br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/manage_account'">Manage Account</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/generate_otp'">Generate OTP</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/incident_report'">Incident Report</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/preregister'">Pre-Register</button>
+</div>
+</div>
+{% endblock %}

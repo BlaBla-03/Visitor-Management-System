@@ -1,0 +1,50 @@
+{% extends 'security_base.html' %}
+{% block title %}View Incident Report{% endblock %}
+{% block body %}
+{% block additional_styles %}
+
+
+
+
+<style>
+      .btn.btn-primary3{
+        background-color: #1ab81a; /* Background color */
+        border-color: #d9d9d9; /* Border color */
+        color: white;
+        margin-bottom: 20px; 
+    }
+      
+      .btn.btn-primary3:hover, .btn.btn-primary3:focus {
+        background-color:#00b000  ; /* Background color on hover or focus */
+        border-color: #c3c3c3; /* Border color on hover or focus */
+        color: white;
+      }
+</style>
+{% endblock %}
+
+<div class="container mt-4">
+    <h1>Incident Report Details - ID: {{ report.id }}</h1>
+    <div class="mb-3">
+        <strong>Report Date:</strong> {{ report.reportDate.strftime('%Y-%m-%d %H:%M') }}
+    </div>
+    <div class="mb-3">
+        <strong>Incident Type:</strong> {{ report.incidentType }}
+    </div>
+    <div class="mb-3">
+        <strong>Description:</strong> {{ report.description }}
+    </div>
+    <div class="mb-3">
+        <strong>Reported By:</strong> {{ report.reportedBy }}
+    </div>
+    <div class="mb-3">
+        <strong>Contact Number:</strong> {{ report.contactNumber }}
+    </div>
+    <form method="POST" onsubmit="return confirm('Mark this report as checked?');">
+        <button type="submit" class="btn btn-primary3">Mark as Checked</button>
+    </form>
+    <div class="back-button-container">
+        <a href="{{ url_for('views.security_incident') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
+{% endblock %}

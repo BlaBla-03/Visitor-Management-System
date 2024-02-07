@@ -1,0 +1,44 @@
+{% extends "base.html" %} {% block title %}Sign Up{% endblock %}
+{% block content %}
+<form method="POST">
+    <br><h3 align="center">Tenant Sign Up</h3>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" placeholder="Enter Username" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" placeholder="Enter Email" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="phone_num" name="phone_num" placeholder="Enter Phone Number" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="ic">IC Number</label>
+        <input type="ic_num" name="ic_num" placeholder="Enter IC Number" class="form-control" required>
+    </div>   
+    <div class="form-group">
+        <label for="tenant_unit">Tenant Unit</label>
+        <input type="tenant_unit" name="tenant_unit" placeholder="Enter Tenant Unit" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="password1">Password</label>
+        <input type="password1" name="password1" placeholder="Enter Password" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="password2">Confirm Password</label>
+        <input type="password2" name="password2" placeholder="Confirm Password" class="form-control" required>
+    </div>
+    <br />
+    <div style="display: flex;">
+        <div class="back-button-container">
+            <a style="border-radius: 20px;" href="{{ url_for('views.manage_tenant') }}" class="btn btn-secondary">Back</a>
+        </div>
+        <button style="margin-left: auto; border-radius: 20px;" type="submit" class="btn btn-primary">Sign Up</button>
+    </div>
+</form>
+
+
+
+{% endblock %}

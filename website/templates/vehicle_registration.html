@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Registration{% endblock %}
+{% block content %}
+<style>
+    .btn-light-grey {
+        background-color: #d3d3d3; 
+        border-color: #d3d3d3; 
+        color: black; 
+    }
+    .btn-light-red {
+        background-color: #FF5733; 
+        border-color: #FF5733; 
+        color: white; 
+    }
+</style>
+<body>
+    <form method="POST">
+        <h3 align="center" style="margin-top: 50px;">Vehicle Registration</h3> 
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Visitor's Name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="Visitor's Phone Number" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="car_number">Vehicle Number:</label>
+            <input type="text" id="car_number" name="car_number" placeholder="Visitor's Vehicle Number" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="duration_of_stay">Parking Duration:</label>
+            <input type="datetime-local" id="duration_of_stay" name="duration_of_park" placeholder="Parking Duration" class="form-control" required>
+        </div>
+        <div class="form-group">    
+            <label for="visiting_unit_number">Visiting Unit Number:</label>
+            <input type="text" id="visiting_unit_number" name="visiting_unit_number" placeholder="Visiting Unit Number" class="form-control" required>
+        </div>
+        <div class="row">
+            <div class="col text-left">
+                <a href="{{ url_for('views.visitor') }}" class="btn btn-light-red">Back</a> 
+            </div>
+            <div class="col text-right">
+                <button type="submit" class="btn btn-light-grey">Register</button> 
+            </div>
+        </div>
+    </form>
+</body>
+{% endblock %}

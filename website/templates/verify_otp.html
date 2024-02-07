@@ -1,0 +1,36 @@
+{% extends "security_base.html" %}
+{% block title %}Verify OTP{% endblock %}
+{% block content %}
+{% block additional_styles %}
+<style>
+      .btn.btn-primary3{
+        background-color: #0FFF50; /* Background color */
+        border-color: #d9d9d9; /* Border color */
+      }
+      
+      .btn.btn-primary3:hover, .btn.btn-primary3:focus {
+        background-color: #20cc00; /* Background color on hover or focus */
+        border-color: #c3c3c3; /* Border color on hover or focus */
+      }
+</style>
+{% endblock %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="text-center">Verify OTP</h3>
+            <form method="POST" class="text-center">
+                
+                <div class="form-group">
+                    <label for="otp" class="sr-only">OTP:</label>
+                    <input type="text" id="otp" name="otp" placeholder="Enter Visitor's OTP" class="form-control" required>
+                </div>
+                <div class="d-grid gap-2 col-6 mx-auto"></div>
+                <button type="submit" class="btn btn-primary3 mt-3"style="width: 200px;">Verify</button>
+            </form>
+        </div>
+    </div>
+    <div class="back-button-container">
+        <a href="{{ url_for('views.security_page') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}

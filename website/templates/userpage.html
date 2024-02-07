@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<br>
+<div class="text-center">
+    <h1><a style="color: black; text-decoration: none;" href="https://youtu.be/dQw4w9WgXcQ?si=1vHpI4HyH4svD5M4" target="_blank" rel="noopener noreferrer">{{ current_user.username }}'s Homepage</a></h1>
+</div>
+<br>
+<div class="text-center">
+    <br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/manage_account'">Manage Account</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/availability'">Unit Availability</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/manage_tenant'">Manage Tenants</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/manage_visitor'">Manage Visitors</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/notifications'">Notification</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/generate_otp'">Generate OTP</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/incident_report'">Incident Report</button>
+    <br><br>
+    <button style="border-radius: 20px ; padding-left: 30px; padding-right: 30px;" type="button" class="btn btn-primary0" onclick="window.location.href='/preregister'">Pre-Register</button>
+</div>
+{% endblock %}

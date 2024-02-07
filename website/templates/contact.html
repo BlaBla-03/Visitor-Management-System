@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Contact Us</h2>
+    <div class="card">
+        <div class="card-body">
+            <h4>Security</h4>
+            <p>If you need immediate assistance, please call or email our security team.</p>
+            <p><strong>Phone:</strong> {{ security_phone }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ security_email }}">{{ security_email }}</a></p>
+            <hr>
+            <h4>Management</h4>
+            <p>For general inquiries, please contact our management office by phone or email.</p>
+            <p><strong>Phone:</strong> {{ management_phone }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ management_email }}">{{ management_email }}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}  <!-- Adjust this to extend from your base template -->
+
+{% block title %}Manage Visitors{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 style="margin-bottom: 15px;">Manage Visitors</h2>
+    {% if visitors %}
+        <div class="list-group">
+            {% for visitor in visitors %}
+            <div style="margin-bottom: 5px; background-color: rgb(173, 170, 170); border-radius: 10px; border-width: 2px; border-color: rgb(124, 122, 122) ;" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ visitor.name }}</h5>
+                    <p class="mb-1">IC Number: {{ visitor.ic_number }}</p>
+                    <p class="mb-1">Phone Number: {{ visitor.phone_number }}</p>
+                    <p class="mb-1">Unit: {{ visitor.unit }}</p>
+                    <p class="mb-1">Duration of Stay: {{ visitor.duration_of_stay.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <!-- Form to remove (unapprove) the visitor -->
+                    <form action="{{ url_for('views.unapprove_visitor', visitor_id=visitor.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No visitors found.</p>
+    {% endif %}
+    <br>
+    <div class="back-button-container">
+        <a style="border-radius: 20px;" href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}

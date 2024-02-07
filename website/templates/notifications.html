@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 style="margin-bottom: 15px;">Notifications</h2>
+    {% for notification in notifications %}
+        <div style="border-radius: 15px; background-color: rgb(173, 170, 170); border-width: 2px;" class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ notification.visitor_name }}</h5>
+                <p class="card-text"><span style="font-weight: bold;">IC Number:</span> {{ notification.visitor_ic }}</p>
+                <p class="card-text"><span style="font-weight: bold;">Uwunit:</span> {{ notification.unit }}</p>
+                <p class="card-text"><span style="font-weight: bold;">Message:</span> {{ notification.message }}</p>
+                <p class="card-text"><span style="font-weight: bold;">Duration of Stay:</span> {{ notification.duration_of_stay.strftime('%Y-%m-%d %H:%M') }}</p>
+                <!-- Add a form for the approve button -->
+                <form action="{{ url_for('views.approve_visitor', visitor_id=notification.registered_unit_id) }}" method="post">
+                    <button style="color: white; border-radius: 20px;" type="button" onclick="approveVisitor('{{ notification.visitor_ic }}', '{{ notification.unit }}')" class="btn btn-primary2">Approve Visitor</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="back-button-container">
+        <a style="border-radius: 20px;" href="{{ url_for('views.userpage') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+<script>
+function approveVisitor(visitorIC, unit) {
+    fetch('/approve_visitor', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            visitor_ic: visitorIC,
+            unit: unit
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.message) {
+            alert(data.message);
+            // Optionally, reload the page or update the DOM to reflect the approval
+        } else if(data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}

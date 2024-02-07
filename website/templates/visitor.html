@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<style>
+    .header-container {
+        margin-bottom: 80px;
+        margin-top: 40px;
+    }
+    .btn-custom {
+        width: 180px;  
+        height: 40px;  
+        border-radius: 15px; 
+    }
+    .btn-light-grey {
+        background-color: #d3d3d3; 
+        border-color: #d3d3d3; 
+        color: black; 
+    }
+    .btn-red {
+        background-color: #ff5733;
+        border-color: #ff5733; 
+        color: white; 
+    }
+    .back-button-container .btn-custom {
+        width: 150px;
+        height: 40px;
+        border-radius: 0; 
+    }
+</style>
+<div class="text-center header-container"> 
+    <h1>Visitor Homepage</h1>
+</div>
+<div class="text-center">
+    <div style="margin-bottom: 25px;"> 
+        <button type="button" class="btn btn-light-grey btn-custom" onclick="window.location.href='/visitor_registration'">Visitor Registration</button>
+    </div>
+    <div style="margin-bottom: 25px;"> 
+        <button type="button" class="btn btn-light-grey btn-custom" onclick="window.location.href='/vehicle_registration'">Vehicle Registration</button>
+    </div>
+    <div style="margin-bottom: 50px;"> 
+        <button type="button" class="btn btn-light-grey btn-custom" onclick="window.location.href='/incident_report'">Incident Report</button>
+    </div>
+    <div style="margin-bottom: 25px;"> 
+        <div class="back-button-container">
+            <a href="{{ url_for('views.home') }}" class="btn btn-red btn-custom">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

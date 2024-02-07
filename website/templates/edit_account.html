@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 style="margin-bottom: 15px ;" class="text-center">Edit Account</h2>
+    <div style="background-color: rgb(173, 170, 170); border-radius: 20px; border-width: 2px;" class="card">
+        <div class="card-body">
+
+            <!-- Edit Form for Phone Number and Email -->
+            <form method="POST" action="{{ url_for('views.edit_user_details') }}">
+                <div class="mb-3">
+                    <label style="font-weight: bold;" for="phone_num" class="form-label">Phone Number:</label>
+                    <input type="text" class="form-control" id="phone_num" name="phone_num" value="{{ current_user.phone_num }}" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;" for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                </div>
+                <button style="border-radius: 20px; color: antiquewhite;" type="submit" class="btn btn-primary">Save Changes</button>
+            </form><br>
+
+            <!-- Change Password Form -->
+            <form method="POST" action="{{ url_for('views.change_password') }}">
+                <div class="mb-3">
+                    <label style="font-weight: bold;" for="old_password" class="form-label">Old Password:</label>
+                    <input type="password" class="form-control" id="old_password" name="old_password" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;" for="new_password" class="form-label">New Password:</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" required>
+                </div>
+                <div class="mb-3">
+                    <label style="font-weight: bold;" for="confirm_new_password" class="form-label">Confirm New Password:</label>
+                    <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" required>
+                </div>
+                <button style="border-radius: 20px; font-weight: bold;" type="submit" class="btn btn-primary">Change Password</button>
+            </form>
+        </div>
+    </div><br>
+    <div class="back-button-container">
+        <a style="border-radius: 20px;" href="{{ url_for('views.manage_account') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}
