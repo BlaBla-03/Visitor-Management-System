@@ -69,6 +69,7 @@ class UserModelView(ModelView):
 
 class Registered_Unit(db.Model):
     __tablename__ = 'registered_unit'
+    __table_args__ = (db.UniqueConstraint('ic', 'unit', name='unique_ic_unit'),)
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ic = db.Column(db.String(12)) 
     unit = db.Column(db.String(5))
