@@ -7,7 +7,7 @@ def role_required(*roles):
         @wraps(fn)
         def decorated_view(*args, **kwargs):
             if not current_user.is_authenticated or not any(role.name in roles for role in current_user.roles):
-                return abort(403)  # Forbidden access
+                return abort(403)  
             return fn(*args, **kwargs)
         return decorated_view
     return wrapper

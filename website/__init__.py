@@ -33,14 +33,13 @@ def create_app():
 
     from .models import initialize_admin_data
     
-    # Add your model views here
     admin.add_view(UserModelView(User, db.session))
     admin.add_view(RegisteredUnitModelView(Registered_Unit, db.session))
     admin.add_link(MenuLink(name='Logout', url='/logout'))
 
     with app.app_context():
-        db.create_all()  # Create tables based on models
-        initialize_admin_data()  # Initialize admin data if needed
+        db.create_all()  
+        initialize_admin_data()  
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -50,7 +49,6 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(id):
-        # Attempt to load a standard user
         return User.query.get(int(id))
     
     @app.route('/image/<filename>')
