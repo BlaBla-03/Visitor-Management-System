@@ -11,4 +11,22 @@ Installation Steps
    "pip install -r requirements.txt"
 4. Lastly, run the main.py and hold CTRL and click the link shown in the terminal. You also can just paste this link into your browser http://127.0.0.1:5001
    ![image](https://github.com/BlaBla-03/Visitor-Management-System/assets/102528634/621c3e4e-2c37-424b-be93-a29f768bdfd5)
+5. These are the default id and pass for admin, security, user and tenant.
+Admin
+id: admin123
+pass: admin123
+
+Security
+id: security
+pass: 1234567
+
+User
+email: ngjiahong@gmail.com
+pass: 1234567
+
+Tenant
+email: tenant@gmail.com
+pass: 1234567
+
+6. To visit security page type /security and login. For admin page type /admin and login.
 
