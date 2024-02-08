@@ -3,7 +3,7 @@ Visitor Management System for SE project
 
 # Please do not forget to install python in advance.
 Installation Steps
-1. Install the file from github if you have not done so
+1. Install the file from github if you have not done so.
    https://github.com/BlaBla-03/Visitor-Management-System
 
 2. You will need to install the required extensions of the program.
